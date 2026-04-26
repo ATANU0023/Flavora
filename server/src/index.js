@@ -11,9 +11,19 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({ 
   origin: (origin, callback) => {
+    // 1. Allow requests with no origin (like mobile apps or same-origin)
     if (!origin) return callback(null, true);
+    
+    // 2. Allow any localhost variation
     const isLocalhost = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1');
-    if (isLocalhost || (process.env.CLIENT_URL && origin === process.env.CLIENT_URL)) {
+    
+    // 3. Allow any Vercel deployment (Production or Preview)
+    const isVercel = origin.endsWith('.vercel.app');
+
+    // 4. Allow specific CLIENT_URL if set
+    const isClientUrl = process.env.CLIENT_URL && origin === process.env.CLIENT_URL;
+    
+    if (isLocalhost || isVercel || isClientUrl) {
       callback(null, true);
     } else {
       console.log('🚫 CORS Blocked Origin:', origin);
@@ -24,7 +34,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Database Connection Middleware (Ensures DB is connected before every request)
+// Database Connection Middleware
 app.use(async (req, res, next) => {
   try {
     await connectDB();
