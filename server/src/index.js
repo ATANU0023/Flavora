@@ -8,18 +8,11 @@ const favoritesRouter = require('./routes/favorites');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to MongoDB
-connectDB();
-
 // Middleware
 app.use(cors({ 
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
-    
-    // Allow any localhost or the specific production client URL
     const isLocalhost = origin.startsWith('http://localhost') || origin.startsWith('http://127.0.0.1');
-    
     if (isLocalhost || (process.env.CLIENT_URL && origin === process.env.CLIENT_URL)) {
       callback(null, true);
     } else {
@@ -30,6 +23,16 @@ app.use(cors({
   credentials: true 
 }));
 app.use(express.json());
+
+// Database Connection Middleware (Ensures DB is connected before every request)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database connection failed' });
+  }
+});
 
 // Routes
 app.use('/api/auth', authRouter);
