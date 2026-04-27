@@ -16,7 +16,14 @@ export default function RecipeDetail() {
 
   useEffect(() => {
     setLoading(true);
-    getMealById(id).then((data) => { setMeal(data); setLoading(false); });
+    getMealById(id).then((data) => {
+      setMeal(data);
+      setLoading(false);
+      if (data) {
+        document.title = `${data.strMeal} — Flavora`;
+      }
+    });
+    return () => { document.title = 'Flavora — Discover Your Perfect Recipe'; };
   }, [id]);
 
   const handleFav = useCallback(async () => {
