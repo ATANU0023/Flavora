@@ -2,6 +2,8 @@
 
 Flavora is a modern, responsive web application that helps you discover delicious recipes using TheMealDB API. Save your favorites, explore categories, and find inspiration for your next meal.
 
+## Visit: https://flavora-nine.vercel.app/
+
 ## 🚀 Features
 
 - **Recipe Discovery**: Search by name or ingredient.
